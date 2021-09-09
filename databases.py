@@ -3,7 +3,7 @@ import cryptocode
 
 class Database():
 	def auth(self, name, key):
-		Cryptedkey = json.load(open('keys.json'))[name]
+		Cryptedkey = json.load(open('users.json'))[name]['key']
 		if str(cryptocode.decrypt(Cryptedkey, key)) == key:
 			return True
 		return False
@@ -139,3 +139,11 @@ class Database():
 			db[name][base][collection] = []
 			json.dump(db, open('database.json', 'w'), indent=4)
 			return True
+	def getUser(self, name):
+		db = json.load(open("database.json"))
+		try:
+			return db[name]
+		except:
+			db[name] = {}
+			json.dump(db, open('database.json', 'w'), indent=4)
+			return db[name]

@@ -9,9 +9,18 @@
 </head>
 <body>
 	<div class="container text-center mt-5">
-		<h1>DiaryDB</h1>	
-		<a href="/login"><button class="btn btn-info">Login</button></a>
-		<a href="/signup"><button class="btn btn-info">Signup</button></a>
+		<form action="/login" method="POST">
+			<h3>Name</h3>
+			<input type="text" name="name">
+			<br>
+			<h3>Password</h3>
+			<input type="password" name="password">
+			<br>
+			<h3>Key</h3>
+			<input type="password" name="key">
+			<br>
+			<button type="submit">Submit</button>
+		</form>		
 	</div>
 </body>
 </html>

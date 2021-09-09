@@ -10,8 +10,9 @@
 <body>
 	<div class="container text-center mt-5">
 		<h1>DiaryDB</h1>	
-		<a href="/login"><button class="btn btn-info">Login</button></a>
-		<a href="/signup"><button class="btn btn-info">Signup</button></a>
+        <h3>Welcome {{user['name']}}</h3>
+        <h5>Your Key: {{user['key']}}</h5>
+		<a href="/logout"><button class="btn btn-danger">Logout</button></a>
 	</div>
 </body>
 </html>
