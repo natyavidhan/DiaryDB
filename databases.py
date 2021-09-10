@@ -123,7 +123,7 @@ class Database():
 	def createDB(self, name, base):
 		db = json.load(open("database.json"))
 		try:
-			db[name][base]
+			print(db[name][base])
 			return False
 		except:
 			db[name][base] = {}
@@ -133,7 +133,7 @@ class Database():
 	def createCollection(self, name, base, collection):
 		db = json.load(open("database.json"))
 		try:
-			db[name][base][collection]
+			a = db[name][base][collection]
 			return False
 		except:
 			db[name][base][collection] = []

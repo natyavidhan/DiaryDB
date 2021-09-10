@@ -48,7 +48,7 @@ def signup():
         return jsonify({'RESULT': 'User Already Exists'})
     except:
         users[request.form['name']] = {"password": cryptocode.encrypt(request.form['password'], request.form['password']),
-                                       "key": cryptocode.encrypt(res, request.form['password'])}
+                                       "key": cryptocode.encrypt(res, res)}
         with open('users.json', 'w') as f:
             json.dump(users, f, indent=4)
         session['user'] = {'name': request.form['name'], 'key': res}
@@ -129,6 +129,30 @@ def deleteRoute():
             return jsonify({"ERROR": f"{e}"})
     return jsonify({'ERROR': 'Wrong Key'})
 
+@app.route('/createDB', methods=['POST'])
+def createDB():
+    data = request.get_json()
+    if database.auth(data['name'], data['key']) and data['base'] != "":
+        try:
+            res = database.createDB(data['name'], data['base'])
+            print(res)
+            return jsonify({'SUCCESS': 'Database Created'})
+        except Exception as e:
+            print(e)
+            return jsonify({"ERROR": f"{e}"})
+    return jsonify({'ERROR': 'Wrong Key'})
 
+@app.route('/createCollection', methods=['POST'])
+def createCollection():
+    data = request.get_json()
+    if database.auth(data['name'], data['key']) and data['base'] != "" and data['collection'] != "":
+        try:
+            res = database.createCollection(data['name'], data['base'], data['collection'])
+            print(res)
+            return jsonify({'SUCCESS': 'Database Created'})
+        except Exception as e:
+            print(e)
+            return jsonify({"ERROR": f"{e}"})
+    return jsonify({'ERROR': 'Wrong Key'})
 if __name__ == '__main__':
     app.run(debug=True)
