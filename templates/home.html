@@ -30,7 +30,7 @@
       <div class="mt-5 database">
         <h3>Databases</h3>
         <select name="db" id="db" onchange="changeDB(this)">
-			<option value=""></option>
+          <option value=""></option>
           {% for base in data %}
           <option value="{{base}}">{{base}}</option>
           {% endfor %}
@@ -44,29 +44,32 @@
           id="collection"
           class="mt-5"
           onchange="changeCollection(this)"
-        >
-        </select>
+        ></select>
         <h4>Create Collection</h4>
         <input type="text" id="collectionName" />
-        <button class="btn btn-success" onclick="createCollection()">Create</button>
+        <button class="btn btn-success" onclick="createCollection()">
+          Create
+        </button>
+        <br />
+		<h4>Create Document</h4>
+		<textarea name="" id="docJSON" cols="30" rows="10">
+
+		</textarea>
+		<center>
+			<div class="documents">
+				<h4>Documents</h4>
+				<div class="card" style="width: 18rem;">
+					<ul class="list-group list-group-flush" id="docs">
+					</ul>
+				  </div>
+			</div>
+			
+		</center>
       </div>
     </div>
-    <script>
-      function prettyPrint() {
-        var ugly = document.getElementById("myTextArea");
-        try {
-          ugly.style.backgroundColor = "white";
-          document.getElementById("myTextArea").value = JSON.stringify(
-            JSON.parse(ugly.value),
-            undefined,
-            4
-          );
-        } catch (e) {
-          ugly.style.backgroundColor = "#ff9e9e";
-        }
-      }
-      //   setInterval(prettyPrint, 300);
-      function changeDB(dbName) {
+	<script>
+		
+		function changeDB(dbName) {
         var dbs = `{{data|tojson|safe}}`;
         dbs = JSON.parse(dbs);
         var db = dbs[dbName.value];
@@ -86,6 +89,22 @@
           document.getElementById("collection").add(option);
         }
       }
+      function changeCollection() {
+		  var collectionName = $("#collection").val();
+        var dbs = `{{data|tojson|safe}}`;
+        dbs = JSON.parse(dbs);
+        var db = dbs[$("#db").val()];
+        var collection = db[collectionName.value];
+        console.log(collection);
+		  $('#docs').empty();
+        for (var i = 0; i < collection.length; i++) {
+          var doc = collection[i];
+          var card = `
+		  <li class="list-group-item">`+JSON.stringify(doc)+`</li>
+		  `;
+		  $("#docs").append(card);
+        }
+      }
       function createDB() {
         $.ajax({
           url: "/createDB",
@@ -94,8 +113,8 @@
           contentType: "application/json",
           data: JSON.stringify({
             base: $("#dbName").val(),
-			name: "{{user['name']}}",
-			key: "{{user['key']}}"
+            name: "{{user['name']}}",
+            key: "{{user['key']}}",
           }),
           success: function (data) {
             console.log(data);
@@ -111,9 +130,9 @@
           contentType: "application/json",
           data: JSON.stringify({
             base: $("#db").val(),
-			collection: $("#collectionName").val(),
-			name: "{{user['name']}}",
-			key: "{{user['key']}}"
+            collection: $("#collectionName").val(),
+            name: "{{user['name']}}",
+            key: "{{user['key']}}",
           }),
           success: function (data) {
             console.log(data);
@@ -121,6 +140,7 @@
           },
         });
       }
-    </script>
+	//   changeCollection();
+	</script>
   </body>
 </html>

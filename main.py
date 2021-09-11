@@ -9,7 +9,9 @@ app = Flask(__name__)
 
 database = Database()
 
-app.secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
+app.secret_key = ''.join(random.choice(
+    string.ascii_uppercase + string.digits) for _ in range(32))
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -54,12 +56,14 @@ def signup():
         session['user'] = {'name': request.form['name'], 'key': res}
         return redirect(url_for('home'))
 
+
 @app.route('/logout', methods=['GET'])
 def logout():
-	session.pop('user', None)
-	return redirect(url_for('home'))
+    session.pop('user', None)
+    return redirect(url_for('home'))
 
 # -----------------------------------------------------API Routes---------------------------------------------------------------
+
 
 @app.route('/verify', methods=['POST'])
 def verify():
@@ -89,7 +93,7 @@ def findRoute():
     if database.auth(data['name'], data['key']):
         try:
             result = database.find(
-                data['name'], data['base'], data['collection'], list(data['identity']))
+                data['name'], data['base'], data['collection'], dict(data['identity']))
             return jsonify({'SUCCESS': result})
         except Exception as e:
             return jsonify({"ERROR": f"{e}"})
@@ -102,13 +106,12 @@ def updateRoute():
     if database.auth(data['name'], data['key']):
         try:
             if data['one'] == "true":
-                result = database.updateOne(data['name'], data['base'], data['collection'], list(
-                    data['identity']), list(data['change']))
+                result = database.updateOne(data['name'], data['base'], data['collection'], dict(data['identity']), dict(data['change']))
                 return jsonify({'SUCCESS': result})
-            result = database.update(data['name'], data['base'], data['collection'], list(
-                data['identity']), list(data['change']))
+            result = database.update(data['name'], data['base'], data['collection'], data['identity'], data['change'])
             return jsonify({'SUCCESS': result})
         except Exception as e:
+            print(e)
             return jsonify({"ERROR": f"{e}"})
     return jsonify({'ERROR': 'Wrong Key'})
 
@@ -120,14 +123,15 @@ def deleteRoute():
         try:
             if data['one'] == "true":
                 result = database.deleteOne(
-                    data['name'], data['base'], data['collection'], list(data['identity']))
+                    data['name'], data['base'], data['collection'], data['identity'])
                 return jsonify({'SUCCESS': result})
             result = database.delete(
-                data['name'], data['base'], data['collection'], list(data['identity']))
+                data['name'], data['base'], data['collection'], data['identity'])
             return jsonify({'SUCCESS': result})
         except Exception as e:
             return jsonify({"ERROR": f"{e}"})
     return jsonify({'ERROR': 'Wrong Key'})
+
 
 @app.route('/createDB', methods=['POST'])
 def createDB():
@@ -142,17 +146,21 @@ def createDB():
             return jsonify({"ERROR": f"{e}"})
     return jsonify({'ERROR': 'Wrong Key'})
 
+
 @app.route('/createCollection', methods=['POST'])
 def createCollection():
     data = request.get_json()
     if database.auth(data['name'], data['key']) and data['base'] != "" and data['collection'] != "":
         try:
-            res = database.createCollection(data['name'], data['base'], data['collection'])
+            res = database.createCollection(
+                data['name'], data['base'], data['collection'])
             print(res)
             return jsonify({'SUCCESS': 'Database Created'})
         except Exception as e:
             print(e)
             return jsonify({"ERROR": f"{e}"})
     return jsonify({'ERROR': 'Wrong Key'})
+
+
 if __name__ == '__main__':
     app.run(debug=True)

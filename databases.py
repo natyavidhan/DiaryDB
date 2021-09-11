@@ -36,11 +36,11 @@ class Database():
 			docs = db[name][base][collection]
 			res = []
 			for i in docs:
-				try:
-					if i[identity[0]] == identity[1]:
-						res.append(i)
-				except:
-					pass
+				a = []
+				for (key, value) in set(identity.items()) & set(i.items()):
+					a.append(i)
+				if len(a) == len(identity):
+					res.append(i)
 			if len(res) == 0:
 				return None
 			return res
@@ -51,43 +51,54 @@ class Database():
 	def update(self, name, base, collection, identity, change):
 		items = self.find(name, base, collection, identity)
 		if items is not None:
-			for i in items:
-				i[change[0]] = change[1]
 			db = json.load(open("database.json"))
-			docs = db[name][base][collection]
-			res = []
-			for i in docs:
-				try:
-					if i[identity[0]] == identity[1]:
-						i[change[0]] = change[1]
-					res.append(i)
-				except:
-					pass
-			db[name][base][collection] = res
-			json.dump(db, open('database.json', 'w'), indent=4)
-			return True
+			try:
+				docs = db[name][base][collection]
+				res = []
+				num=0
+				for i in docs:
+					for (key, value) in set(identity.items()) & set(i.items()):
+						res.append([i,num])
+					num+=1
+				for i in res:
+					i[0]={**i[0], **change}
+					docs[i[1]] = i[0]
+				print(res)
+				print(docs)
+				db[name][base][collection] = docs
+				json.dump(db, open('database.json', 'w'), indent=4)
+				return True
+			except Exception as e:
+				print(e)
+				return None
 		return False
 
 	def updateOne(self, name, base, collection, identity, change):
 		items = self.find(name, base, collection, identity)
 		if items is not None:
-			for i in items:
-				i[change[0]] = change[1]
 			db = json.load(open("database.json"))
-			docs = db[name][base][collection]
-			res = []
-			e=0
-			for i in docs:
-				try:
-					if i[identity[0]] == identity[1] and e == 0:
-						i[change[0]] = change[1]
-						e+=1
-					res.append(i)
-				except:
-					pass
-			db[name][base][collection] = res
-			json.dump(db, open('database.json', 'w'), indent=4)
-			return True
+			try:
+				docs = db[name][base][collection]
+				res = []
+				num=0
+				e=0
+				for i in docs:
+					for (key, value) in set(identity.items()) & set(i.items()):
+						res.append([i,num])
+					num+=1
+				for i in res:
+					if e==0:
+						i[0]={**i[0], **change}
+						docs[i[1]] = i[0]
+						e=1
+				print(res)
+				print(docs)
+				db[name][base][collection] = docs
+				json.dump(db, open('database.json', 'w'), indent=4)
+				return True
+			except Exception as e:
+				print(e)
+				return None
 		return False
 
 	def delete(self, name, base, collection, identity):
@@ -106,18 +117,29 @@ class Database():
 		items = self.find(name, base, collection, identity)
 		if items is not None:
 			db = json.load(open("database.json"))
-			docs = db[name][base][collection]
-			e=0
-			for i in docs:
-				try:
-					if i[identity[0]] == identity[1] and e==0:
-						docs.remove(i)
+			try:
+				docs = db[name][base][collection]
+				res = []
+				num=0
+				e=0
+				for i in docs:
+					for (key, value) in set(identity.items()) & set(i.items()):
+						res.append([i,num])
+					num+=1
+				print(docs)
+				for i in res:
+					if e==0:
+						print(i)
+						docs.pop(i[1])
 						e=1
-				except:
-					pass
-			db[name][base][collection] = docs
-			json.dump(db, open('database.json', 'w'), indent=4)
-			return True
+				print(res)
+				print(docs)
+				db[name][base][collection] = docs
+				json.dump(db, open('database.json', 'w'), indent=4)
+				return True
+			except Exception as e:
+				print(e)
+				return None
 		return False
 
 	def createDB(self, name, base):
