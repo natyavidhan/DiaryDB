@@ -5,8 +5,8 @@ import json
 
 name = input("Your Name: ")
 
-res = ''.join(random.choices(string.ascii_letters+string.digits,k=30)) 
-print("Key :"+ str(res))  
+res = ''.join(random.choices(string.ascii_letters+string.digits,k=30))
+print(f"Key :{res}")  
 
 file = json.load(open('keys.json'))
 file[name]=cryptocode.encrypt(res, res)
