@@ -20,12 +20,10 @@ class Database():
 				db[name][base][collection].append(data)
 			except:
 				try:
-					db[name][base] = {}
-					db[name][base][collection] = []
+					db[name][base] = {collection: []}
 					db[name][base][collection].append(data)
 				except:
-					db[name] = {}
-					db[name][base] = {}
+					db[name] = {base: {}}
 					db[name][base][collection] = []
 					db[name][base][collection].append(data)
 		json.dump(db, open('database.json', 'w'), indent=4)
@@ -36,12 +34,10 @@ class Database():
 			docs = db[name][base][collection]
 			res = []
 			for i in docs:
-				a = []
-				for (key, value) in set(identity.items()) & set(i.items()):
-					a.append(i)
+				a = [i for (key, value) in set(identity.items()) & set(i.items())]
 				if len(a) == len(identity):
 					res.append(i)
-			if len(res) == 0:
+			if not res:
 				return None
 			return res
 		except Exception as e:
@@ -55,11 +51,8 @@ class Database():
 			try:
 				docs = db[name][base][collection]
 				res = []
-				num=0
-				for i in docs:
-					for (key, value) in set(identity.items()) & set(i.items()):
-						res.append([i,num])
-					num+=1
+				for num, i in enumerate(docs):
+					res.extend([i,num] for (key, value) in set(identity.items()) & set(i.items()))
 				for i in res:
 					i[0]={**i[0], **change}
 					docs[i[1]] = i[0]
@@ -78,14 +71,11 @@ class Database():
 		if items is not None:
 			db = json.load(open("database.json"))
 			try:
+				e=0
 				docs = db[name][base][collection]
 				res = []
-				num=0
-				e=0
-				for i in docs:
-					for (key, value) in set(identity.items()) & set(i.items()):
-						res.append([i,num])
-					num+=1
+				for num, i in enumerate(docs):
+					res.extend([i,num] for (key, value) in set(identity.items()) & set(i.items()))
 				for i in res:
 					if e==0:
 						i[0]={**i[0], **change}
@@ -118,14 +108,11 @@ class Database():
 		if items is not None:
 			db = json.load(open("database.json"))
 			try:
+				e=0
 				docs = db[name][base][collection]
 				res = []
-				num=0
-				e=0
-				for i in docs:
-					for (key, value) in set(identity.items()) & set(i.items()):
-						res.append([i,num])
-					num+=1
+				for num, i in enumerate(docs):
+					res.extend([i,num] for (key, value) in set(identity.items()) & set(i.items()))
 				print(docs)
 				for i in res:
 					if e==0:
